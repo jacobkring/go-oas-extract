@@ -56,27 +56,61 @@ func sortedFiles(pkg *ast.Package) []file {
 	return files
 }
 
-func extractComment(cgrp *ast.CommentGroup) (string, bool) {
+type ExtractType string
+
+const (
+	Default ExtractType = "+extract"
+	Security ExtractType = "+extract:component:securitySchemes"
+	Path ExtractType = "+extract:path"
+	Schema ExtractType = "+extract:schema"
+)
+
+func (e ExtractType) Valid() bool {
+	return e == Default || e == Security
+}
+
+func extractComment(cgrp *ast.CommentGroup) (string, ExtractType) {
 	s := cgrp.Text()
 	parts := strings.SplitN(s, "\n", 2)
-	if strings.TrimSpace(parts[0]) == "+extract" {
-		return parts[1], true
+	extractType := ExtractType(strings.TrimSpace(parts[0]))
+	switch extractType {
+	case Default:
+		return parts[1], extractType
+	case Security:
+
 	}
-	return "", false
+	return "", extractType
 }
 
 func extractPackageComments(pkg *ast.Package) []string {
 	files := sortedFiles(pkg)
 
+	securitySchemes := "  securitySchemes:\n"
+	components := "components:\n"
 	var comments []string
 	for _, f := range files {
 		for _, c := range f.file.Comments {
-			s, ok := extractComment(c)
-			if ok {
-				comments = append(comments, s)
+			s, e := extractComment(c)
+			if e.Valid() {
+				s = strings.ReplaceAll(s, "\t", "  ")
+				switch e {
+				case Default:
+					comments = append(comments, s)
+				case Security:
+					s = strings.ReplaceAll(s, "\n", "\n    ")
+					securitySchemes += s
+				}
 			}
 		}
 	}
+
+	// append paths
+	// append components
+	// append schemas to components
+
+	// append securitySchemes to components
+	components += securitySchemes
+	comments = append(comments, components)
 
 	return comments
 }

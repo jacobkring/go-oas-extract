@@ -1,9 +1,12 @@
 package main
 
 import (
+	"github.com/jacobkring/go-assert"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -18,7 +21,7 @@ func TestSorter(t *testing.T) {
 		t.Fatalf("Expected len(pkgs) == 1, got %d", len(pkgs))
 	}
 
-	expected := []string{"doc.go", "a.go", "testdata.go", "z.go"}
+	expected := []string{"doc.go", "a.go", "paths.go", "testdata.go", "z.go"}
 	sorted := sortedFiles(pkgs["testdata"])
 
 	if len(sorted) != len(expected) {
@@ -55,9 +58,9 @@ func TestExtractComment(t *testing.T) {
 		c.Text = test.comment
 
 		cgrp := &ast.CommentGroup{List: []*ast.Comment{&c}}
-		_, ok := extractComment(cgrp)
-		if ok != test.expected {
-			t.Fatalf("Iteration %d: Expected %t, got %t: %q", i, test.expected, ok, test.comment)
+		_, e := extractComment(cgrp)
+		if e.Valid() != test.expected {
+			t.Fatalf("Iteration %d: Expected %t, got %t: %q", i, test.expected, e.Valid(), test.comment)
 		}
 	}
 }
@@ -75,20 +78,27 @@ func TestParsePackage(t *testing.T) {
 
 	comments := extractPackageComments(pkgs["testdata"])
 
-	expected := []string{
-		"More text, in doc.go\n",
-		"Here's a comment in a.go\n",
-		"A comment inside testdata.go\n",
-		"An interesting\nmulti-line\ncomment inside\nz.go\n",
+	file, err := os.Open("testoutput/doc.yml")
+	if err != nil {
+		t.Fatal(err)
 	}
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+
+	expected := []string{
+		string(b),
+	}
+
 
 	if len(comments) != len(expected) {
 		t.Fatalf("Expected %#v, got %#v", expected, comments)
 	}
 
 	for i := 0; i < len(comments); i++ {
-		if comments[i] != expected[i] {
-			t.Errorf("Expected %s, got %s", expected[i], comments[i])
-		}
+		assert.Equal(t, expected[i], comments[i])
 	}
 }
