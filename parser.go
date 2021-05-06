@@ -1,7 +1,7 @@
-// The doc-extract utility extracts text from Go source comments
+// The go-oas-extract utility extracts text from Go source comments
 // tagged with the special token "+extract" in the first line.
 //
-// Usage: doc-extract <source dir> <output file>
+// Usage: go-oas-extract <source dir> <output file>
 //
 // "source dir" is a directory containing Go source files ending
 // in .go, and "output file" is the file to write.
