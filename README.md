@@ -49,7 +49,8 @@ Blueprint](example/README.md).
 
 There weren't any existing libraries that I could find that would extract 
 inline comments from a Go API and transform them into a valid Open API 3.0+ 
-specification. 
+specification. I was using https://github.com/go-swagger/go-swagger and there
+is no intention for that project to support anything other than Open API 2.0.
 
 ## Contributing
 
