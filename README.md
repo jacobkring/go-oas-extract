@@ -1,19 +1,17 @@
-# doc-extract
+# go-oas-extract
 
-doc-extract is a tool for extracting specially tagged comments in Go
-source code.  Tagged comments start with a blank line containing
-`+extract`.  Both grouped line comments (`//`) and block comments (`/*
-*/`) are supported.
+go-oas-extract is a tool for extracting specially tagged comments in Go
+source code and transforming it into valid Open API 3.0.3 Specification.
+
+Tagged comments start with a blank line containing `+extract`.  
+
+Both grouped line comments (`//`) and block comments (`/* */`) are supported.
 
 ## Installation
 
-Go 1.16 and later:
+Go 1.16:
 
-    go install github.com/joeshaw/doc-extract@latest
-
-Go 1.15 and earlier:
-
-    go get -u github.com/joeshaw/doc-extract
+    go install github.com/jacobkring/go-oas-extract@latest
 
 ## Usage
 
@@ -49,23 +47,18 @@ Blueprint](example/README.md).
 
 ## Motivation
 
-This tool is especially useful for extracting documentation from
-comments when GoDoc isn't appropriate.  For example, documentation for
-HTTP APIs.  This could be used to extract [API
-Blueprint](https://apiblueprint.org/) for processing by
-[Snowboard](https://github.com/bukalapak/snowboard).  Or it could be
-used to pull ReStructured Text (RST) for processing by
-[Sphinx](http://sphinx-doc.org/) and the
-[httpdomain](https://sphinxcontrib-httpdomain.readthedocs.io/en/stable/)
-extension.
-
-This replaces my now-deprecated
-[rst-extract](https://github.com/joeshaw/rst-extract) tool.
+There weren't any existing libraries that I could find that would extract 
+inline comments from a Go API and transform them into a valid Open API 3.0+ 
+specification. 
 
 ## Contributing
 
 Issues and pull requests are welcome.  When filing a PR, please make
 sure the code has been run through `gofmt` and that the tests pass.
+
+## Notes
+
+Initially forked from https://github.com/joeshaw/doc-extract to provide a basis for text extraction.
 
 ## License
 
