@@ -73,11 +73,8 @@ func extractComment(cgrp *ast.CommentGroup) (string, ExtractType) {
 	s := cgrp.Text()
 	parts := strings.SplitN(s, "\n", 2)
 	extractType := ExtractType(strings.TrimSpace(parts[0]))
-	switch extractType {
-	case Default:
+	if extractType.Valid() {
 		return parts[1], extractType
-	case Security:
-
 	}
 	return "", extractType
 }
@@ -99,6 +96,7 @@ func extractPackageComments(pkg *ast.Package) []string {
 				case Security:
 					s = strings.ReplaceAll(s, "\n", "\n    ")
 					securitySchemes += s
+					fmt.Println(securitySchemes)
 				}
 			}
 		}
